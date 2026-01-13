@@ -380,6 +380,13 @@
                     class="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition shadow-sm">
                     <i class="fas fa-table mr-1"></i> จัดการข้อมูล
                 </button>
+                
+                <!-- GitHub Sync Button -->
+                <button onclick="loadFromGitHub()"
+                    class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:shadow-lg transition shadow-sm font-bold">
+                    <i class="fab fa-github mr-1"></i> โหลดจาก GitHub
+                </button>
+                
                 <div class="flex gap-2">
                     <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="processCSV(this)">
                     <button onclick="triggerImport()"
@@ -1043,6 +1050,81 @@
                 toast.classList.add('translate-y-10', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 2000);
+        }
+
+        // Load vocabulary from GitHub repository
+        async function loadFromGitHub() {
+            const csvUrl = 'https://greendevth.github.io/KidsApp/data/vocabulary.csv';
+            
+            showToast('📥 กำลังโหลดข้อมูลจาก GitHub...', 'info');
+
+            try {
+                const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                const lines = text.split('\n');
+                let count = 0;
+                let newVocab = [];
+
+                // Skip header (first line)
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    // Parse CSV (handle quotes)
+                    const parts = line.match(/(?:"([^"]*)"|([^,]+))(?:,|$)/g);
+                    
+                    if (parts && parts.length >= 5) {
+                        const cleanParts = parts.map(p => p.replace(/^[",]|[",]$/g, '').trim());
+                        
+                        newVocab.push({
+                            zh: cleanParts[0] || '',
+                            py: cleanParts[1] || '',
+                            en: cleanParts[2] || '',
+                            thRead: cleanParts[3] || '',
+                            th: cleanParts[4] || '',
+                            emoji: cleanParts[5] || '📝',
+                            img: cleanParts[5] || ''  // emoji as fallback
+                        });
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    // Ask user: Replace or Merge?
+                    const action = confirm(
+                        `พบ ${count} คำศัพท์จาก GitHub\n\n` +
+                        `กด OK = เพิ่มเข้าไป (รวมกับข้อมูลเดิม)\n` +
+                        `กด Cancel = แทนที่ทั้งหมด (ลบข้อมูลเดิม)`
+                    );
+
+                    if (action) {
+                        // Merge: Add new vocab to existing
+                        vocabList = [...vocabList, ...newVocab];
+                        showToast(`✅ เพิ่ม ${count} คำศัพท์สำเร็จ!`, 'success');
+                    } else {
+                        // Replace: Overwrite all
+                        vocabList = newVocab;
+                        showToast(`✅ แทนที่ด้วย ${count} คำศัพท์จาก GitHub!`, 'success');
+                    }
+
+                    localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+                    render();
+                    
+                    if (!document.getElementById('mgmt-area').classList.contains('hidden')) {
+                        renderTable();
+                    }
+                } else {
+                    showToast('⚠️ ไม่พบข้อมูลในไฟล์ CSV', 'info');
+                }
+            } catch (error) {
+                console.error('GitHub CSV load error:', error);
+                showToast('❌ ไม่สามารถโหลดจาก GitHub ได้', 'info');
+            }
         }
 
         function triggerImport() {
