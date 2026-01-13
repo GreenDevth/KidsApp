@@ -1085,21 +1085,50 @@
         }
 
         function addNew() {
+            const zh = document.getElementById('inZh').value.trim();
+            const py = document.getElementById('inPy').value.trim();
+            const en = document.getElementById('inEn').value.trim();
+            const thRead = document.getElementById('inThRead').value.trim();
+            const th = document.getElementById('inTh').value.trim();
+            const imgInput = document.getElementById('inImg').value.trim();
+
+            // Validation
+            if (!zh) {
+                showToast('⚠️ กรุณากรอกภาษาจีน', 'info');
+                return;
+            }
+
             const v = {
-                zh: document.getElementById('inZh').value,
-                py: document.getElementById('inPy').value,
-                en: document.getElementById('inEn').value,
-                thRead: document.getElementById('inThRead').value,
-                th: document.getElementById('inTh').value,
-                img: document.getElementById('inImg').value
+                zh: zh,
+                py: py || '',
+                en: en || '',
+                thRead: thRead || '',
+                th: th || '',
+                emoji: imgInput || '📝',  // Use emoji instead of img
+                img: imgInput || ''       // Keep img for backward compatibility
             };
 
-            if (v.zh) {
-                vocabList.push(v);
-                render();
-                document.getElementById('add-modal').classList.add('hidden');
-                ['inZh', 'inPy', 'inEn', 'inThRead', 'inTh', 'inImg'].forEach(id => document.getElementById(id).value = '');
+            vocabList.push(v);
+            
+            // Save to localStorage
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+            
+            // Update UI
+            render();
+            if (!document.getElementById('mgmt-area').classList.contains('hidden')) {
+                renderTable();
             }
+            
+            // Close modal
+            document.getElementById('add-modal').classList.add('hidden');
+            
+            // Clear inputs
+            ['inZh', 'inPy', 'inEn', 'inThRead', 'inTh', 'inImg'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            // Show success message
+            showToast('✅ เพิ่มคำศัพท์สำเร็จ!', 'success');
         }
 
         function del(i) {
