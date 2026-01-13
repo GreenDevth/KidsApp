@@ -461,21 +461,40 @@
             <div
                 class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">➕ เพิ่มคำศัพท์ใหม่
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2" id="modal-title">➕ เพิ่มคำศัพท์ใหม่
                     </h3>
+                    <p class="text-xs text-gray-500 mb-4"><i class="fas fa-info-circle text-blue-500 mr-1"></i> กรอกแค่ภาษาจีนก็เพิ่มได้ ฟิลด์อื่นเป็น optional</p>
                     <div class="space-y-3">
-                        <input type="text" id="inZh" placeholder="ภาษาจีน (เช่น 猫)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
-                        <input type="text" id="inPy" placeholder="พินอิน (เช่น māo)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
-                        <input type="text" id="inEn" placeholder="อังกฤษ (เช่น Cat)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
-                        <input type="text" id="inThRead" placeholder="คำอ่านไทย (เช่น เมา)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
-                        <input type="text" id="inTh" placeholder="แปลไทย (เช่น แมว)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
-                        <input type="text" id="inImg" placeholder="Emoji หรือ URL รูปภาพ (ถ้ามี)"
-                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 mb-1 block">ภาษาจีน <span class="text-red-500">*</span></label>
+                            <input type="text" id="inZh" placeholder="เช่น 猫"
+                                class="w-full border-2 border-red-200 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-red/50 focus:border-brand-red outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">พินอิน</label>
+                            <input type="text" id="inPy" placeholder="เช่น māo (ไม่บังคับ)"
+                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">อังกฤษ</label>
+                            <input type="text" id="inEn" placeholder="เช่น Cat (ไม่บังคับ)"
+                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">คำอ่านไทย</label>
+                            <input type="text" id="inThRead" placeholder="เช่น เมา (ไม่บังคับ)"
+                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">แปลไทย</label>
+                            <input type="text" id="inTh" placeholder="เช่น แมว (ไม่บังคับ)"
+                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">Emoji/รูปภาพ</label>
+                            <input type="text" id="inImg" placeholder="เช่น 🐱 หรือ URL (ไม่บังคับ)"
+                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue outline-none">
+                        </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
