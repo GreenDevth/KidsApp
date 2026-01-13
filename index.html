@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3-Lang Chinese Master (Modern V.11)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>เรียนจีน 3 ภาษา - Chinese Master</title>
+    <meta name="description" content="เรียนรู้คำศัพท์ภาษาจีน อังกฤษ ไทย พร้อมเกมทายคำและระบบเสียง AI">
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Sarabun:wght@300;400;600&display=swap"
@@ -63,6 +67,119 @@
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Mobile Touch Optimizations */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        button, .cursor-pointer {
+            touch-action: manipulation;
+        }
+
+        /* Dragging mobile styles */
+        .dragging-mobile {
+            opacity: 0.5;
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Mobile-specific improvements */
+        @media (max-width: 768px) {
+            /* Base font size increase */
+            body {
+                font-size: 16px;
+            }
+
+            /* Larger touch targets */
+            button, input[type="range"], select {
+                min-height: 44px;
+                min-width: 44px;
+                font-size: 16px !important;
+            }
+
+            input[type="text"] {
+                min-height: 44px;
+                font-size: 16px !important;
+            }
+
+            /* Card improvements */
+            .card-hover {
+                padding: 1.25rem !important;
+                margin: 0.5rem !important;
+            }
+
+            /* Heading sizes */
+            h2 {
+                font-size: 1.75rem !important;
+            }
+
+            h3 {
+                font-size: 1.25rem !important;
+            }
+
+            /* Hide desktop-only elements */
+            .hidden-mobile {
+                display: none !important;
+            }
+
+            /* Improve table scrolling */
+            #mgmt-area {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            table td, table th {
+                padding: 0.75rem !important;
+            }
+
+            /* Stack controls vertically on mobile */
+            .control-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+
+            /* Game area mobile */
+            #game-area img {
+                max-width: 250px !important;
+                margin: 1rem auto !important;
+            }
+
+            /* Vocabulary cards - one column on mobile */
+            #grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+                padding: 0.5rem !important;
+            }
+
+            /* Navigation */
+            nav {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            nav button {
+                flex: 1 1 calc(50% - 0.25rem);
+                min-width: calc(50% - 0.25rem);
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+            #grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            #game-area img {
+                max-width: 180px !important;
+            }
         }
 
         /* Print Styles */
@@ -188,7 +305,7 @@
 
         <!-- Controls Dashboard -->
         <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+            <div class="control-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
 
                 <!-- Voice Settings -->
                 <div class="space-y-2">
@@ -801,12 +918,20 @@
             });
         }
 
-        // Drag & Drop functions
+        // Drag & Drop functions (with mobile touch support)
         let draggedIndex = null;
+        let touchStartY = 0;
+        let touchCurrentY = 0;
 
         function dragStart(event, index) {
             draggedIndex = index;
             event.target.style.opacity = '0.4';
+            
+            // Add touch event listeners for mobile
+            if (event.type === 'touchstart') {
+                touchStartY = event.touches[0].clientY;
+                event.target.classList.add('dragging-mobile');
+            }
         }
 
         function dragOver(event) {
