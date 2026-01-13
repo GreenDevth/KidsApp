@@ -1110,6 +1110,46 @@
             link.remove();
         }
 
+        // Helper: Generate Pinyin from Chinese using a simple romanization approach
+        async function getPinyin(chineseText) {
+            try {
+                // Use Google Translate TTS endpoint to get romanization (hacky but works)
+                // Alternative: Use a dedicated Pinyin API
+                const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=rm&q=${encodeURIComponent(chineseText)}`);
+                const data = await response.json();
+                
+                if (data && data[0] && data[0][0] && data[0][0][3]) {
+                    return data[0][0][3]; // Romanization field
+                }
+                
+                // Fallback: try pinyin-lite approach
+                return ''; // Return empty if failed
+            } catch (error) {
+                console.error('Pinyin generation failed:', error);
+                return '';
+            }
+        }
+
+        // Helper: Generate Thai reading from English pronunciation
+        function getThaiReading(englishText, chineseText = '') {
+            // Simple phonetic mapping (English -> Thai approximation)
+            const phoneticMap = {
+                'cat': 'แคท', 'dog': 'ด็อก', 'bird': 'เบิร์ด', 'fish': 'ฟิช',
+                'door': 'ดอร์', 'school': 'สกูล', 'book': 'บุ๊ก', 'pen': 'เพน',
+                'water': 'วอเตอร์', 'food': 'ฟู้ด', 'house': 'เฮาส์', 'car': 'คาร์',
+                'tree': 'ทรี', 'flower': 'ฟลาวเวอร์', 'sun': 'ซัน', 'moon': 'มูน',
+                'table': 'เทเบิล', 'chair': 'แชร์', 'bed': 'เบด', 'window': 'วินโดว์'
+            };
+            
+            const lower = englishText.toLowerCase();
+            if (phoneticMap[lower]) {
+                return phoneticMap[lower];
+            }
+            
+            // If no match, return empty (user should fill manually)
+            return '';
+        }
+
         // Auto-Translate Function
         async function autoTranslate() {
             const zh = document.getElementById('inZh').value.trim();
@@ -1177,7 +1217,25 @@
                     await new Promise(resolve => setTimeout(resolve, 300));
                 }
 
-                showToast('✅ แปลสำเร็จ!', 'success');
+                // Generate Pinyin if Chinese text exists
+                const finalZh = document.getElementById('inZh').value.trim();
+                if (finalZh && !document.getElementById('inPy').value.trim()) {
+                    const pinyin = await getPinyin(finalZh);
+                    if (pinyin) {
+                        document.getElementById('inPy').value = pinyin;
+                    }
+                }
+
+                // Generate Thai reading if English text exists
+                const finalEn = document.getElementById('inEn').value.trim();
+                if (finalEn && !document.getElementById('inThRead').value.trim()) {
+                    const thaiReading = getThaiReading(finalEn, finalZh);
+                    if (thaiReading) {
+                        document.getElementById('inThRead').value = thaiReading;
+                    }
+                }
+
+                showToast('✅ แปลสำเร็จ! (ตรวจสอบพินอินและคำอ่านไทยด้วยนะครับ)', 'success');
             } catch (error) {
                 console.error('Translation error:', error);
                 showToast('❌ เกิดข้อผิดพลาดในการแปล', 'info');
