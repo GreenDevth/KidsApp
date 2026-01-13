@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Lang Chinese Master (Modern V.11)</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Sarabun:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Kanit', 'sans-serif'],
+                        body: ['Sarabun', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#e74c3c',
+                            blue: '#3498db',
+                            green: '#2ecc71',
+                            dark: '#2c3e50',
+                            light: '#f8f9fa'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            #print-area {
+                display: block !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            th,
+            td {
+                border: 1px solid black;
+                padding: 10px;
+                text-align: center;
+            }
+        }
+
+        #print-area {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 glass shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-brand-red to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        中
+                    </div>
+                    <div>
+                        <h1
+                            class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-dark to-brand-blue">
+                            Chinese Master
+                        </h1>
+                        <p class="text-xs text-gray-500 font-body">เรียนรู้คำศัพท์ 3 ภาษา & เกมทายภาพ</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 items-center">
+                    <div class="hidden lg:block text-xs text-gray-500 bg-yellow-50 px-3 py-1.5 rounded-lg border border-yellow-200">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-1"></i>
+                        <span class="font-bold">หมายเหตุ:</span> บาง AI อ่านพินอินผิด (เช่น 学校 อ่านเป็น "เหาะห่าว" แทน "เสวีย-เสี้ยว") 
+                        → แนะนำเลือก <strong>Microsoft Yunxi</strong> หรือ <strong>Xiaoxiao</strong>
+                    </div>
+                    <button onclick="startGame()"
+                        class="hidden md:flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-2.5 rounded-full font-bold shadow-lg hover:shadow-orange-500/30 transition-all transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-gamepad"></i> เล่นเกมทายศัพท์
+                    </button>
+                    <!-- Mobile Menu Button (Simplified) -->
+                    <button onclick="startGame()"
+                        class="md:hidden w-10 h-10 bg-yellow-500 text-white rounded-full shadow-lg">
+                        <i class="fas fa-gamepad"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 no-print">
+
+        <!-- Game Area -->
+        <div id="game-area"
+            class="hidden bg-white rounded-3xl shadow-2xl overflow-hidden mb-10 border-4 border-brand-red/10 relative fade-in">
+            <button onclick="stopGame()"
+                class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="p-8 md:p-12 text-center">
+                <span class="inline-block px-3 py-1 bg-brand-red/10 text-brand-red rounded-full text-sm font-bold mb-4">
+                    🎮 ทายคำศัพท์จากภาพ/ตัวอักษร
+                </span>
+
+                <div class="flex justify-center items-center min-h-[300px] mb-6">
+                    <!-- Image Question -->
+                    <div id="game-question-img" class="hidden transform transition-all hover:scale-105 duration-300">
+                        <img id="g-img" src="" alt="Question"
+                            class="max-h-[300px] rounded-2xl shadow-xl object-cover border-4 border-white ring-4 ring-gray-100">
+                    </div>
+                    <!-- Text Question (Fallback) -->
+                    <div id="game-question-text" class="hidden">
+                        <h1 id="g-zh" class="text-8xl md:text-9xl font-bold text-brand-dark drop-shadow-sm"></h1>
+                    </div>
+                </div>
+
+                <!-- Multiple Choice Area -->
+                <div id="choice-area" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
+                    <!-- Buttons injected by JS -->
+                </div>
+
+                <!-- Feedback Area (Hidden by default) -->
+                <div id="game-feedback"
+                    class="hidden bg-red-50 border border-red-100 rounded-xl p-4 mb-6 max-w-xl mx-auto animate-pulse">
+                    <p id="feedback-text" class="text-lg text-red-600 font-body"></p>
+                    <button id="next-q-btn" onclick="nextQuestion()"
+                        class="mt-3 bg-brand-dark text-white px-6 py-2 rounded-lg text-sm hover:bg-gray-800 transition">
+                        ไปข้อถัดไป
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Dashboard -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+
+                <!-- Voice Settings -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"><i
+                            class="fas fa-volume-up mr-1"></i> เสียงภาษาจีน <span class="text-yellow-500" title="⚠️ บาง AI อ่านพินอินไม่ถูก ลอง Yunxi/Xiaoxiao">⚠️</span></label>
+                    <div class="relative">
+                        <select id="voiceCN" onchange="saveSettings()"
+                            class="w-full bg-gray-50 border border-gray-200 hover:border-brand-blue rounded-xl px-4 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition cursor-pointer text-sm"></select>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-3.5 text-gray-400 pointer-events-none text-xs"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 italic">💡 แนะนำ: Microsoft Yunxi (Mainland)</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"><i
+                            class="fas fa-volume-up mr-1"></i> เสียงภาษาอังกฤษ</label>
+                    <div class="relative">
+                        <select id="voiceEN" onchange="saveSettings()"
+                            class="w-full bg-gray-50 border border-gray-200 hover:border-brand-blue rounded-xl px-4 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition cursor-pointer text-sm"></select>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-3.5 text-gray-400 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"><i
+                            class="fas fa-volume-up mr-1 text-brand-green"></i> เสียงภาษาไทย (NEW)</label>
+                    <div class="relative">
+                        <select id="voiceTH" onchange="saveSettings()"
+                            class="w-full bg-gray-50 border border-gray-200 hover:border-brand-green rounded-xl px-4 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-green/20 transition cursor-pointer text-sm"></select>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-3.5 text-gray-400 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">ความเร็วเสียง: <span
+                            id="rVal" class="text-brand-blue">0.8</span></label>
+                    <input type="range" id="rate" min="0.1" max="1.5" step="0.1" value="0.8" onchange="saveSettings()"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-dark">
+                </div>
+
+            </div>
+
+            <div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-100">
+                <button onclick="document.getElementById('add-modal').classList.remove('hidden')"
+                    class="bg-brand-dark text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition shadow-sm">
+                    <i class="fas fa-plus mr-1"></i> เพิ่มคำศัพท์
+                </button>
+                <button onclick="toggleMgmt()"
+                    class="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition shadow-sm">
+                    <i class="fas fa-table mr-1"></i> จัดการข้อมูล
+                </button>
+                <div class="flex gap-2">
+                    <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="processCSV(this)">
+                    <button onclick="triggerImport()"
+                        class="bg-white border border-blue-200 text-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition shadow-sm">
+                        <i class="fas fa-file-import mr-1"></i> Import CSV
+                    </button>
+                    <button onclick="exportCSV()"
+                        class="bg-white border border-green-200 text-green-600 px-4 py-2 rounded-lg text-sm hover:bg-green-50 transition shadow-sm">
+                        <i class="fas fa-file-csv mr-1"></i> Save CSV
+                    </button>
+                </div>
+                <input type="file" id="json-input" accept=".json" class="hidden" onchange="importData(this)">
+                <button onclick="document.getElementById('json-input').click()"
+                    class="bg-white border border-purple-200 text-purple-600 px-4 py-2 rounded-lg text-sm hover:bg-purple-50 transition shadow-sm">
+                    <i class="fas fa-file-import mr-1"></i> Import JSON
+                </button>
+                <button onclick="exportData()"
+                    class="bg-white border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-sm hover:bg-indigo-50 transition shadow-sm">
+                    <i class="fas fa-file-export mr-1"></i> Export JSON
+                </button>
+                <button onclick="resetDefault()" class="ml-auto text-red-400 hover:text-red-500 text-sm px-4 py-2">
+                    <i class="fas fa-trash-alt mr-1"></i> รีเซ็ตข้อมูล
+                </button>
+            </div>
+
+            <!-- Management Table Area -->
+            <div id="mgmt-area" class="hidden mt-6 overflow-x-auto rounded-xl border border-gray-200">
+                <table class="w-full text-left bg-white">
+                    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                        <tr>
+                            <th class="px-3 py-3 text-center w-20">ลำดับ</th>
+                            <th class="px-3 py-3">จีน</th>
+                            <th class="px-3 py-3">พินอิน</th>
+                            <th class="px-3 py-3">อังกฤษ</th>
+                            <th class="px-3 py-3">แปลไทย</th>
+                            <th class="px-3 py-3">อ่านไทย</th>
+                            <th class="px-3 py-3">รูปภาพ URL</th>
+                            <th class="px-3 py-3 text-center w-28">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mgmt-tbody" class="divide-y divide-gray-100">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+                <div class="p-4 bg-gray-50 flex items-center justify-between boorder-t border-gray-100 sticky bottom-0">
+                    <div class="text-xs text-gray-400">
+                        <i class="fas fa-info-circle mr-1"></i> แก้ไขข้อมูลในตาราง ระบบจะบันทึกอัตโนมัติทันที
+                        (Auto-Save)
+                    </div>
+                    <button onclick="manualSave()"
+                        class="bg-brand-green text-white px-6 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-green-600 transition active:scale-95">
+                        <i class="fas fa-save mr-1"></i> ยืนยันการบันทึก
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="relative mb-8">
+            <input type="text" id="search" placeholder="ค้นหาคำศัพท์... (พิมพ์ไทย, อังกฤษ, หรือจีน)"
+                class="w-full bg-white border-0 py-4 pl-12 pr-6 rounded-2xl shadow-md text-lg focus:ring-4 focus:ring-brand-blue/10 transition placeholder-gray-400">
+            <i class="fas fa-search absolute left-5 top-5 text-gray-400 text-lg"></i>
+        </div>
+
+        <!-- Vocab Grid -->
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Cards will be injected here -->
+        </div>
+
+    </div>
+
+    <!-- Add Modal -->
+    <div id="add-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                onclick="document.getElementById('add-modal').classList.add('hidden')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div
+                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">➕ เพิ่มคำศัพท์ใหม่
+                    </h3>
+                    <div class="space-y-3">
+                        <input type="text" id="inZh" placeholder="ภาษาจีน (เช่น 猫)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                        <input type="text" id="inPy" placeholder="พินอิน (เช่น māo)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                        <input type="text" id="inEn" placeholder="อังกฤษ (เช่น Cat)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                        <input type="text" id="inThRead" placeholder="คำอ่านไทย (เช่น เมา)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                        <input type="text" id="inTh" placeholder="แปลไทย (เช่น แมว)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                        <input type="text" id="inImg" placeholder="URL รูปภาพ (ถ้ามี)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-blue/50 outline-none">
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button onclick="addNew()" type="button"
+                        class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-brand-green text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        บันทึก
+                    </button>
+                    <button onclick="document.getElementById('add-modal').classList.add('hidden')" type="button"
+                        class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        ยกเลิก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Area -->
+    <div id="print-area">
+        <h1>รายการคำศัพท์ภาษาจีน</h1>
+        <div id="print-pages"></div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const defaultData = [
+            { zh: "桌子", py: "zhuōzi", en: "Table", thRead: "จัว-จึ", th: "โต๊ะ", emoji: "🪑" },
+            { zh: "椅子", py: "yǐzi", en: "Chair", thRead: "อี่-จึ", th: "เก้าอี้", emoji: "💺" },
+            { zh: "门", py: "mén", en: "Door", thRead: "เหมิน", th: "ประตู", emoji: "🚪" },
+            { zh: "窗户", py: "chuānghu", en: "Window", thRead: "ชวง-หุ", th: "หน้าต่าง", emoji: "🪟" },
+            { zh: "房间", py: "fángjiān", en: "Room", thRead: "ฟาง-เจียน", th: "ห้อง", emoji: "🛏️" },
+            { zh: "厕所", py: "cèsuǒ", en: "Toilet", thRead: "เช่อ-สั่ว", th: "ห้องน้ำ", emoji: "🚽" },
+            { zh: "学校", py: "xuéxiào", en: "School", thRead: "เสวีย-เสี้ยว", th: "โรงเรียน", emoji: "🏫" },
+            { zh: "同学", py: "tóngxué", en: "Classmate", thRead: "ถง-เสวีย", th: "เพื่อนร่วมชั้น", emoji: "👥" },
+            { zh: "作业", py: "zuòyè", en: "Homework", thRead: "จั้ว-เย่", th: "การบ้าน", emoji: "📝" },
+            { zh: "读", py: "dú", en: "Read", thRead: "ตู๋", th: "อ่าน", emoji: "📖" },
+            { zh: "写字", py: "xiězì", en: "Write", thRead: "เสี่ย-จื้อ", th: "เขียนหนังสือ", emoji: "✏️" },
+            { zh: "电脑", py: "diànnǎo", en: "Computer", thRead: "เตี้ยน-เหน่า", th: "คอมพิวเตอร์", emoji: "💻" },
+            { zh: "图书馆", py: "túshūguǎn", en: "Library", thRead: "ถู-ซู-ก่วน", th: "ห้องสมุด", emoji: "📚" },
+            { zh: "教室", py: "jiàoshì", en: "Classroom", thRead: "เจี้ยว-ซื่อ", th: "ห้องเรียน", emoji: "🎓" },
+            { zh: "操场", py: "cāochǎng", en: "Playground", thRead: "เฌา-ฉ่าง", th: "สนามกีฬา", emoji: "⚽" },
+            { zh: "食堂", py: "shítáng", en: "Canteen", thRead: "สือ-ถาง", th: "โรงอาหาร", emoji: "🍽️" },
+            { zh: "休息", py: "xiūxi", en: "Rest", thRead: "ซิ่ว-สิ", th: "พักผ่อน", emoji: "😴" },
+            { zh: "家", py: "jiā", en: "Home", thRead: "เจีย", th: "บ้าน/ครอบครัว", emoji: "🏠" },
+            { zh: "水", py: "shuǐ", en: "Water", thRead: "สุ่ย", th: "น้ำ", emoji: "💧" },
+            { zh: "米饭", py: "mǐfàn", en: "Steamed Rice", thRead: "หมี่-ฟ่าน", th: "ข้าวสวย", emoji: "🍚" },
+            { zh: "面包", py: "miànbāo", en: "Bread", thRead: "เมี่ยน-เปา", th: "ขนมปัง", emoji: "🍞" },
+            { zh: "花", py: "huā", en: "Flower", thRead: "ฮวา", th: "ดอกไม้", emoji: "🌸" },
+            { zh: "树", py: "shù", en: "Tree", thRead: "ซู", th: "ต้นไม้", emoji: "🌳" },
+            { zh: "雨", py: "yǔ", en: "Rain", thRead: "อวี่", th: "ฝน", emoji: "🌧️" },
+            { zh: "天空", py: "tiānkōng", en: "Sky", thRead: "เทียน-คง", th: "ท้องฟ้า", emoji: "☁️" },
+            { zh: "太阳", py: "tàiyáng", en: "Sun", thRead: "ไท้-หยาง", th: "พระอาทิตย์", emoji: "☀️" },
+            { zh: "月亮", py: "yuèliang", en: "Moon", thRead: "เย่ว-เลี่ยง", th: "พระจันทร์", emoji: "🌙" },
+            { zh: "星星", py: "xīngxing", en: "Star", thRead: "ซิง-ซิง", th: "ดาว", emoji: "⭐" },
+            { zh: "钱", py: "qián", en: "Money", thRead: "เฉียน", th: "เงิน", emoji: "💰" },
+            { zh: "买东西", py: "mǎi dōngxi", en: "Shopping", thRead: "หมาย-ตง-สิ", th: "ซื้อของ", emoji: "🛒" }
+        ];
+
+        // Migrating old data if exists
+        let vocabList = JSON.parse(localStorage.getItem('v11FullData')) || [];
+        
+        // Force update to use emoji instead of img URLs
+        const needsUpdate = vocabList.length === 0 || 
+                           vocabList.some(item => item.img && !item.emoji);
+        
+        if (needsUpdate) {
+            vocabList = defaultData;
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+            console.log('✅ Updated to native Emoji!');
+        }
+
+        // Settings Management
+        const defaultSettings = {
+            voiceCN: '',
+            voiceEN: '',
+            voiceTH: '',
+            rate: 0.8  // เพิ่มความเร็วเล็กน้อยเพื่อความชัดเจน
+        };
+
+        let settings = JSON.parse(localStorage.getItem('v11Settings')) || { ...defaultSettings };
+
+        function saveSettings() {
+            settings.voiceCN = document.getElementById('voiceCN').value;
+            settings.voiceEN = document.getElementById('voiceEN').value;
+            settings.voiceTH = document.getElementById('voiceTH').value;
+            settings.rate = document.getElementById('rate').value;
+            localStorage.setItem('v11Settings', JSON.stringify(settings));
+            showToast('💾 บันทึกการตั้งค่าเสียงแล้ว', 'success');
+        }
+
+        function loadSettings() {
+            setTimeout(() => {
+                const zhSelect = document.getElementById('voiceCN');
+                const enSelect = document.getElementById('voiceEN');
+                const thSelect = document.getElementById('voiceTH');
+                const rateInput = document.getElementById('rate');
+
+                if (settings.voiceCN && zhSelect) {
+                    zhSelect.value = settings.voiceCN;
+                }
+                if (settings.voiceEN && enSelect) {
+                    enSelect.value = settings.voiceEN;
+                }
+                if (settings.voiceTH && thSelect) {
+                    thSelect.value = settings.voiceTH;
+                }
+                if (settings.rate && rateInput) {
+                    rateInput.value = settings.rate;
+                    document.getElementById('rVal').innerText = settings.rate;
+                }
+            }, 500);
+        }
+
+        // --- VOICE ---
+        function populateVoices() {
+            voices = window.speechSynthesis.getVoices();
+
+            const selectBestVoice = (langCode, elemId, preferredNames) => {
+                const filtered = voices.filter(v => v.lang.includes(langCode));
+                const elem = document.getElementById(elemId);
+                
+                if (filtered.length === 0) {
+                    elem.innerHTML = `<option>ไม่พบเสียง (${langCode})</option>`;
+                    return null;
+                }
+
+                // Try to find preferred voice (female/child voice for kids)
+                let bestVoice = null;
+                for (const prefName of preferredNames) {
+                    bestVoice = filtered.find(v => v.name.includes(prefName));
+                    if (bestVoice) break;
+                }
+
+                // If no preferred found, select first female voice or just first one
+                if (!bestVoice) {
+                    bestVoice = filtered.find(v => v.name.includes('Female') || v.name.includes('female')) 
+                        || filtered[0];
+                }
+
+                elem.innerHTML = filtered.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+                
+                // Set best voice as default if no setting saved
+                if (bestVoice && !settings[elemId]) {
+                    elem.value = bestVoice.name;
+                    settings[elemId] = bestVoice.name;
+                    return bestVoice.name;
+                }
+                return null;
+            };
+
+            // Select best voices for each language (kid-friendly female voices)
+            const zhVoice = selectBestVoice('zh', 'voiceCN', [
+                'Microsoft Xiaoxiao',      // ⭐ แนะนำ - เสียงหญิงนุ่มนวลชัดเจน (Mainland)
+                'Microsoft Yunxi',         // เสียงหญิงชัดเจน (Mainland)
+                'Microsoft Yunyang',       // เสียงชายชัดเจน (Mainland)
+                'Microsoft Yunjian',       // เสียงหญิง (Mainland)
+                'Microsoft Xiaoyi',        // เสียงหญิง (Mainland)
+                'Microsoft HsiaoYu',       // เสียงหญิง (Taiwan Mandarin)
+                'Microsoft YunJhe',        // เสียงชาย (Taiwan)
+                'Microsoft HsiaoChen',     // เสียงชาย (Taiwan)
+                'Microsoft Huihui',        // เสียง Desktop (ถ้ามี)
+                'Microsoft Yaoyao',        // เสียง Desktop (ถ้ามี)
+                'Xiaoxiao',
+                'Yunxi',
+                'Female'
+            ]);
+
+            const enVoice = selectBestVoice('en', 'voiceEN', [
+                'Zira',        // Microsoft Zira (Female, US)
+                'Samantha',    // Apple Samantha (Female, US)
+                'Google US English Female',
+                'Susan',       // Apple Susan (Female, US)
+                'Female'
+            ]);
+
+            const thVoice = selectBestVoice('th', 'voiceTH', [
+                'Premwadee',   // Microsoft Premwadee (Female, Thai)
+                'Kanya',       // Apple Kanya (Female, Thai)
+                'Google ไทย',
+                'Female'
+            ]);
+
+            // Save auto-selected voices if any
+            if (zhVoice || enVoice || thVoice) {
+                localStorage.setItem('v11Settings', JSON.stringify(settings));
+            }
+            
+            // Load saved settings after populating voices
+            loadSettings();
+        }
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+
+        function speak(text, type) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(text);
+
+            let vName;
+            if (type === 'zh') vName = document.getElementById('voiceCN').value;
+            else if (type === 'en') vName = document.getElementById('voiceEN').value;
+            else if (type === 'th') vName = document.getElementById('voiceTH').value;
+
+            const voice = voices.find(v => v.name === vName);
+            if (voice) msg.voice = voice;
+
+            msg.rate = document.getElementById('rate').value;
+            msg.lang = type === 'zh' ? 'zh-CN' : (type === 'th' ? 'th-TH' : 'en-US');
+            window.speechSynthesis.speak(msg);
+        }
+
+        // --- RENDER ---
+        function render() {
+            const grid = document.getElementById('grid');
+            const pPages = document.getElementById('print-pages');
+            grid.innerHTML = '';
+            pPages.innerHTML = '';
+
+            vocabList.forEach((v, i) => {
+                // Card UI - Use emoji if available, fallback to img
+                const emojiHTML = v.emoji ? `<div class="h-48 w-full mb-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-8xl">${v.emoji}</div>` :
+                                 v.img ? `<div class="h-48 w-full overflow-hidden mb-4 rounded-xl bg-gray-50 flex items-center justify-center"><img src="${v.img}" class="max-w-full max-h-full object-contain p-2"></div>` : 
+                                 `<div class="h-48 w-full bg-brand-light mb-4 rounded-xl flex items-center justify-center text-4xl text-gray-300"><i class="fas fa-image"></i></div>`;
+
+                grid.innerHTML += `
+                    <div class="card-hover bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative group transition-all duration-300">
+                        <button onclick="del(${i})" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-trash-alt"></i></button>
+                        
+                        ${emojiHTML}
+
+                        <div class="text-center">
+                            <h2 class="text-4xl font-bold text-brand-dark mb-1 cursor-pointer hover:text-brand-red transition" onclick="speak('${v.zh}', 'zh')">${v.zh}</h2>
+                            <p class="text-gray-400 italic mb-4 font-sans">${v.py}</p>
+                            
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between bg-blue-50 px-3 py-2 rounded-lg cursor-pointer hover:bg-blue-100 transition" onclick="speak('${v.en}', 'en')">
+                                    <span class="text-brand-blue font-bold text-sm">${v.en}</span>
+                                    <i class="fas fa-volume-up text-blue-300 text-xs"></i>
+                                </div>
+                                <div class="flex items-center justify-between bg-green-50 px-3 py-2 rounded-lg cursor-pointer hover:bg-green-100 transition" onclick="speak('${v.th}', 'th')">
+                                    <div class="text-left">
+                                        <span class="text-brand-green font-bold text-sm block font-body">${v.th}</span>
+                                        <span class="text-gray-400 text-xs block font-body">อ่าน: ${v.thRead}</span>
+                                    </div>
+                                    <i class="fas fa-volume-up text-green-300 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="speak('${v.zh}', 'zh')" class="w-full mt-4 bg-brand-red text-white py-2 rounded-xl font-bold shadow-md shadow-red-200 hover:bg-red-600 active:scale-95 transition">
+                            <i class="fas fa-play mr-2"></i> ฟังเสียงจีน
+                        </button>
+                    </div>
+                `;
+            });
+
+            // Print UI
+            for (let i = 0; i < vocabList.length; i += 10) {
+                const chunk = vocabList.slice(i, i + 10);
+                pPages.innerHTML += `
+                    <div class="page-break">
+                        <h3 class="text-right text-gray-500 mb-2">หน้า ${Math.floor(i / 10) + 1}</h3>
+                        <table>
+                            <thead><tr><th>จีน</th><th>พินอิน</th><th>อังกฤษ</th><th>ไทย</th><th>คำแปล</th></tr></thead>
+                            <tbody>
+                                ${chunk.map(v => `<tr><td>${v.zh}</td><td>${v.py}</td><td>${v.en}</td><td>${v.thRead}</td><td>${v.th}</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+        }
+
+        // --- GAME LOGIC (MULTIPLE CHOICE) ---
+        let gameChoices = [];
+        let isAnswered = false;
+
+        function startGame() {
+            document.getElementById('game-area').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            nextQuestion();
+        }
+
+        function stopGame() {
+            document.getElementById('game-area').classList.add('hidden');
+        }
+
+        function nextQuestion() {
+            isAnswered = false;
+            // 1. Random Target
+            currentWord = vocabList[Math.floor(Math.random() * vocabList.length)];
+
+            // 2. Random Distractors
+            let distractors = vocabList.filter(v => v !== currentWord);
+            // Shuffle distractors
+            distractors.sort(() => 0.5 - Math.random());
+            // Take 3
+            let choices = distractors.slice(0, 3);
+            choices.push(currentWord);
+            // Shuffle Choices
+            choices.sort(() => 0.5 - Math.random());
+            gameChoices = choices;
+
+            // 3. Render Question
+            const qImg = document.getElementById('game-question-img');
+            const qText = document.getElementById('game-question-text');
+            const imgEl = document.getElementById('g-img');
+            const zhEl = document.getElementById('g-zh');
+
+            if (currentWord.img) {
+                imgEl.src = currentWord.img;
+                qImg.classList.remove('hidden');
+                qText.classList.add('hidden');
+            } else {
+                zhEl.innerText = currentWord.zh;
+                qImg.classList.add('hidden');
+                qText.classList.remove('hidden');
+            }
+
+            // 4. Render Choices UI
+            const choiceArea = document.getElementById('choice-area');
+            const feedbackArea = document.getElementById('game-feedback');
+
+            feedbackArea.classList.add('hidden');
+            choiceArea.innerHTML = '';
+
+            choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full bg-white border-2 border-gray-100 p-4 rounded-xl shadow-sm hover:border-brand-blue hover:bg-blue-50 transition text-lg font-bold text-gray-700 active:scale-95 flex items-center justify-center gap-3`;
+                // Choice Display: EN + Pinyin or TH? Let's use English + Thai for better understanding
+                btn.innerHTML = `<span class="text-brand-dark">${choice.zh}</span> <span class="text-gray-400 text-sm font-normal">(${choice.py})</span>`;
+
+                // If question is text (ZH), choices should probably be meanings (EN/TH)
+                // If question is Image, choices can be ZH
+                // Let's standardise: Choices show ZH + Pinyin + Main Meaning to help learn connection
+
+                // Let's refine: 
+                // IF Question is Image -> Choices are Chinese Words
+                // IF Question is Chinese Word -> Choices are English/Thai Meanings
+
+                if (!currentWord.img) {
+                    // Question is Text(ZH), Choices = EN
+                    btn.innerHTML = `<span class="text-brand-blue">${choice.en}</span> <span class="text-gray-400 text-sm font-body">(${choice.th})</span>`;
+                } else {
+                    // Question is Image, Choices = ZH
+                    btn.innerHTML = `<span class="text-brand-red text-xl">${choice.zh}</span> <span class="text-gray-400 text-sm">(${choice.py})</span>`;
+                }
+
+                btn.onclick = () => checkAnswer(choice, btn);
+                choiceArea.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btnCtx) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = selected === currentWord;
+            const feedbackArea = document.getElementById('game-feedback');
+            const feedbackText = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-q-btn');
+
+            // Highlight Logic
+            const buttons = document.getElementById('choice-area').children;
+            for (let btn of buttons) {
+                btn.disabled = true; // Lock all buttons
+                if (gameChoices.find((c, i) => btn === buttons[i]) === currentWord) {
+                    // This button is the correct answer
+                    btn.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                    btn.classList.remove('bg-white', 'border-gray-100');
+                    btn.innerHTML += ` <i class="fas fa-check-circle text-green-500"></i>`;
+                }
+            }
+
+            if (isCorrect) {
+                btnCtx.classList.add('ring-4', 'ring-green-200');
+                speak('Correct', 'en'); // Sound effect placeholder
+                setTimeout(() => speak(currentWord.zh, 'zh'), 500);
+
+                // Auto next after 2s
+                setTimeout(nextQuestion, 2000);
+            } else {
+                btnCtx.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                btnCtx.classList.remove('bg-white', 'border-gray-100');
+                btnCtx.innerHTML += ` <i class="fas fa-times-circle text-red-500"></i>`;
+
+                speak('Sorry', 'en');
+
+                // Show manual next button
+                feedbackArea.classList.remove('hidden');
+                feedbackText.innerHTML = `คำตอบที่ถูกคือ: <span class="font-bold text-brand-red">${currentWord.zh}</span> ${currentWord.en} (${currentWord.th})`;
+                speak(currentWord.zh, 'zh');
+            }
+        }
+
+        // --- CORE FUNCTIONS ---
+        function speak(text, type) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(text);
+
+            let vName;
+            if (type === 'zh') vName = document.getElementById('voiceCN').value;
+            else if (type === 'en') vName = document.getElementById('voiceEN').value;
+            else if (type === 'th') vName = document.getElementById('voiceTH').value;
+
+            // If voice not found or default, browser chooses
+            if (vName && vName !== "") {
+                const voice = voices.find(v => v.name === vName);
+                if (voice) msg.voice = voice;
+            }
+
+            msg.rate = document.getElementById('rate').value;
+            msg.lang = type === 'zh' ? 'zh-CN' : (type === 'th' ? 'th-TH' : 'en-US');
+            window.speechSynthesis.speak(msg);
+        }
+        // --- DATA MGMT & CSV ---
+        function toggleMgmt() {
+            const mgmtArea = document.getElementById('mgmt-area');
+            const gridArea = document.getElementById('grid');
+            if (mgmtArea.classList.contains('hidden')) {
+                mgmtArea.classList.remove('hidden');
+                gridArea.classList.add('hidden');
+                renderTable();
+            } else {
+                mgmtArea.classList.add('hidden');
+                gridArea.classList.remove('hidden');
+                render();
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('mgmt-tbody');
+            tbody.innerHTML = '';
+            vocabList.forEach((v, i) => {
+                tbody.innerHTML += `
+                    <tr draggable="true" 
+                        ondragstart="dragStart(event, ${i})" 
+                        ondragover="dragOver(event)" 
+                        ondrop="drop(event, ${i})" 
+                        ondragend="dragEnd(event)"
+                        class="hover:bg-gray-50 border-b border-gray-100 transition cursor-move">
+                        <td class="p-3 text-center">
+                            <div class="flex flex-col gap-1 items-center">
+                                <i class="fas fa-grip-vertical text-gray-300 text-sm" title="ลากเพื่อเรียงลำดับ"></i>
+                                <span class="text-xs font-bold text-gray-400">#${i + 1}</span>
+                            </div>
+                        </td>
+                        <td class="p-3"><input type="text" value="${v.zh}" onchange="updateVal(${i}, 'zh', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition"></td>
+                        <td class="p-3"><input type="text" value="${v.py}" onchange="updateVal(${i}, 'py', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none text-gray-500 transition"></td>
+                        <td class="p-3"><input type="text" value="${v.en}" onchange="updateVal(${i}, 'en', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none text-brand-blue font-bold transition"></td>
+                        <td class="p-3"><input type="text" value="${v.th}" onchange="updateVal(${i}, 'th', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none text-brand-green font-bold transition"></td>
+                        <td class="p-3"><input type="text" value="${v.thRead}" onchange="updateVal(${i}, 'thRead', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none text-xs transition"></td>
+                        <td class="p-3"><input type="text" value="${v.img || ''}" placeholder="URL รูปภาพ" onchange="updateVal(${i}, 'img', this.value)" class="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none text-gray-400 transition"></td>
+                        <td class="p-3 text-center">
+                            <button onclick="del(${i})" class="text-red-400 hover:text-red-600 transition p-2 rounded hover:bg-red-50" title="ลบ">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Drag & Drop functions
+        let draggedIndex = null;
+
+        function dragStart(event, index) {
+            draggedIndex = index;
+            event.target.style.opacity = '0.4';
+        }
+
+        function dragOver(event) {
+            event.preventDefault();
+            event.currentTarget.style.borderTop = '3px solid #3b82f6';
+        }
+
+        function drop(event, dropIndex) {
+            event.preventDefault();
+            event.currentTarget.style.borderTop = '';
+            
+            if (draggedIndex === null || draggedIndex === dropIndex) return;
+            
+            // Reorder array
+            const draggedItem = vocabList[draggedIndex];
+            vocabList.splice(draggedIndex, 1);
+            vocabList.splice(dropIndex, 0, draggedItem);
+            
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+            renderTable();
+            render();
+            showToast('✅ เรียงลำดับใหม่แล้ว!', 'success');
+        }
+
+        function dragEnd(event) {
+            event.target.style.opacity = '1';
+            document.querySelectorAll('#mgmt-tbody tr').forEach(row => {
+                row.style.borderTop = '';
+            });
+            draggedIndex = null;
+        }
+
+        function updateVal(index, key, value) {
+            vocabList[index][key] = value;
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+            showToast('บันทึกข้อมูลเรียบร้อยแล้ว');
+        }
+
+        function manualSave() {
+            localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+            showToast('บันทึกข้อมูลทั้งหมดเรียบร้อยแล้ว!', 'success');
+        }
+
+        function showToast(message, type = 'info') {
+            // Remove existing toast
+            const existing = document.getElementById('toast-notification');
+            if (existing) existing.remove();
+
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.className = `fixed bottom-5 right-5 z-[70] px-6 py-3 rounded-xl shadow-lg transform transition-all duration-300 translate-y-10 opacity-0 flex items-center gap-3 font-body ${type === 'success' ? 'bg-green-600' : 'bg-brand-dark'} text-white`;
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.body.appendChild(toast);
+
+            // Animate In
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            // Auto Hide
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        function triggerImport() {
+            document.getElementById('csv-input').click();
+        }
+
+        function processCSV(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                let count = 0;
+
+                // Skip header if present (Simple check: if first line contains "Chinese")
+                const startIndex = lines[0].toLowerCase().includes('chinese') ? 1 : 0;
+
+                for (let i = startIndex; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    // Simple CSV split (Note: doesn't handle commas inside quotes)
+                    const parts = line.split(',');
+                    if (parts.length >= 5) { // Ensure min requirements
+                        vocabList.push({
+                            zh: parts[0]?.trim(),
+                            py: parts[1]?.trim(),
+                            en: parts[2]?.trim(),
+                            thRead: parts[3]?.trim(),
+                            th: parts[4]?.trim(),
+                            img: parts[5]?.trim() || ""
+                        });
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    alert(`นำเข้าสำเร็จ ${count} รายการ`);
+                    render();
+                    if (!document.getElementById('mgmt-area').classList.contains('hidden')) renderTable();
+                } else {
+                    alert('ไม่พบข้อมูลที่ถูกต้องในไฟล์ CSV');
+                }
+                // Reset input
+                input.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Chinese,Pinyin,English,ThaiReading,ThaiMeaning,ImageURL\n";
+            vocabList.forEach(v => {
+                const row = [v.zh, v.py, v.en, v.thRead, v.th, v.img || ''].map(item => `"${item}"`).join(","); // Quote to handle commas
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "chinese_vocab_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function addNew() {
+            const v = {
+                zh: document.getElementById('inZh').value,
+                py: document.getElementById('inPy').value,
+                en: document.getElementById('inEn').value,
+                thRead: document.getElementById('inThRead').value,
+                th: document.getElementById('inTh').value,
+                img: document.getElementById('inImg').value
+            };
+
+            if (v.zh) {
+                vocabList.push(v);
+                render();
+                document.getElementById('add-modal').classList.add('hidden');
+                ['inZh', 'inPy', 'inEn', 'inThRead', 'inTh', 'inImg'].forEach(id => document.getElementById(id).value = '');
+            }
+        }
+
+        function del(i) {
+            if (confirm('ยืนยันลบคำนี้?')) {
+                vocabList.splice(i, 1);
+                render();
+                if (!document.getElementById('mgmt-area').classList.contains('hidden')) renderTable();
+            }
+        }
+
+        function resetDefault() {
+            if (confirm('รีเซ็ตข้อมูลทั้งหมดกลับเป็นค่าเริ่มต้น?')) {
+                vocabList = [...defaultData];
+                render();
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const exportObj = {
+                vocabList: vocabList,
+                settings: settings,
+                exportDate: new Date().toISOString(),
+                version: '11'
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+            const node = document.createElement('a');
+            node.setAttribute("href", dataStr);
+            node.setAttribute("download", `chinese_vocab_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(node);
+            node.click();
+            node.remove();
+            showToast('📦 Export ข้อมูล + การตั้งค่าสำเร็จ!', 'success');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Check if it's new format (with settings)
+                    if (data.vocabList && data.settings) {
+                        vocabList = data.vocabList;
+                        settings = data.settings;
+                        localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+                        localStorage.setItem('v11Settings', JSON.stringify(settings));
+                        showToast('✅ Import ข้อมูล + การตั้งค่าสำเร็จ!', 'success');
+                        loadSettings();
+                    } else if (Array.isArray(data)) {
+                        // Old format (just array)
+                        vocabList = data;
+                        localStorage.setItem('v11FullData', JSON.stringify(vocabList));
+                        showToast('✅ Import ข้อมูลสำเร็จ!', 'success');
+                    } else {
+                        throw new Error('Invalid format');
+                    }
+                    
+                    render();
+                    renderTable();
+                } catch (err) {
+                    showToast('❌ ไฟล์ไม่ถูกต้อง: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('rate').oninput = (e) => {
+            document.getElementById('rVal').innerText = e.target.value;
+        };
+
+        document.getElementById('search').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('#grid > div').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(term)) card.classList.remove('hidden');
+                else card.classList.add('hidden');
+            });
+        };
+
+        // Init
+        populateVoices();
+        render();
+    </script>
+</body>
+
+</html>
