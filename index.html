@@ -1148,11 +1148,18 @@
 
                 // Translate to each target language
                 for (const targetLang of targetLangs) {
-                    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=${sourceLang}|${targetLang}`;
+                    // MyMemory API uses 'zh' not 'zh-CN' for target
+                    const apiTargetLang = targetLang === 'zh-CN' ? 'zh' : targetLang;
+                    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=${sourceLang}|${apiTargetLang}`;
+                    
+                    console.log('Translating:', sourceText, 'from', sourceLang, 'to', apiTargetLang);
+                    
                     const response = await fetch(url);
                     const data = await response.json();
 
-                    if (data.responseStatus === 200 || data.responseData) {
+                    console.log('Translation response:', data);
+
+                    if (data.responseData && data.responseData.translatedText) {
                         const translated = data.responseData.translatedText;
 
                         if (targetLang === 'zh-CN') {
@@ -1162,7 +1169,12 @@
                         } else if (targetLang === 'th') {
                             document.getElementById('inTh').value = translated;
                         }
+                    } else {
+                        console.error('Translation failed for', targetLang, data);
                     }
+                    
+                    // Add small delay between requests to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 300));
                 }
 
                 showToast('✅ แปลสำเร็จ!', 'success');
@@ -1180,14 +1192,15 @@
             const th = document.getElementById('inTh').value.trim();
             const imgInput = document.getElementById('inImg').value.trim();
 
-            // Validation - require at least one main field
+            // Validation - require at least one main field (Chinese OR English OR Thai)
             if (!zh && !en && !th) {
-                showToast('⚠️ กรุณากรอกอย่างน้อย 1 ฟิลด์ (จีน, อังกฤษ, หรือไทย)', 'info');
+                showToast('⚠️ กรุณากรอกอย่างน้อยหนึ่งภาษา (จีน/อังกฤษ/ไทย)', 'info');
                 return;
             }
 
+            // Create vocabulary object with empty strings for missing fields
             const v = {
-                zh: zh,
+                zh: zh || '',
                 py: py || '',
                 en: en || '',
                 thRead: thRead || '',
